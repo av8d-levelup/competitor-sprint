@@ -1,0 +1,11 @@
+{
+  "name": "competitor-sprint",
+  "version": "1.0.0",
+  "description": "Competitive Intelligence Sprint — give it one competitor, get a feature matrix + SWOT + market gaps + strategy in ~2 min via a 5-role AI pipeline. Bilingual output (繁中/EN). For founders / PMs / marketing freelancers. 一鍵競品情報衝刺，5 個 AI 角色分工，報告語言跟隨使用者。",
+  "author": {
+    "name": "AV8D LevelUp",
+    "url": "https://github.com/av8d-levelup"
+  },
+  "homepage": "https://github.com/av8d-levelup/competitor-sprint",
+  "keywords": ["competitive-intelligence", "competitor-analysis", "swot", "market-research", "chinese", "startup", "product-management"]
+}

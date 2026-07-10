@@ -1,0 +1,17 @@
+{
+  "name": "competitor-sprint",
+  "metadata": {
+    "description": "Competitive intelligence toolkit — one competitor in, a feature-matrix + SWOT + strategy report out in ~2 min, via a 5-role AI pipeline. Bilingual (繁中/EN). For founders / PMs / marketing freelancers. 競品情報工具集，報告語言跟隨使用者。"
+  },
+  "owner": {
+    "name": "AV8D LevelUp",
+    "url": "https://github.com/av8d-levelup"
+  },
+  "plugins": [
+    {
+      "name": "competitor-sprint",
+      "source": "./",
+      "description": "Competitive Intelligence Sprint: a 5-role AI pipeline produces a feature-matrix + SWOT + strategy report in ~2 min. Optional hiring-signals, Markdown incremental fact-base, bilingual output (繁中/EN). 一鍵競品情報衝刺，報告語言跟隨使用者。"
+    }
+  ]
+}
