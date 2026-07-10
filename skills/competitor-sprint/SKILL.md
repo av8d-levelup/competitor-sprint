@@ -1,7 +1,7 @@
 ---
 name: competitor-sprint
 description: Competitive Intelligence Sprint（一鍵競品情報衝刺）。輸入一個競品名稱或產業/題目，由「研究員→分析師→產品經理→戰略顧問→評估員」5 個角色分工，自動採集官網基本面與近期動態（可選加開招聘信號），產出含公司概況、功能矩陣、SWOT、戰略建議的完整報告（語言跟隨使用者，預設繁中，可用 --lang en 出英文），並可設定定時監控。Triggers when the user says「競品衝刺」「跑競品」「分析競品 X」「研究對手」「這家公司怎麼樣」「幫我看 X 的 SWOT」or "competitor sprint / analyze competitor X / research a rival / run a SWOT on X".
-argument-hint: "<競品名稱或產業題目> [--competitors \"A, B, C\"] [--我方/--me \"你的產品\"] [--招聘信號/--hiring-signals] [--lang en]"
+argument-hint: "<競品名稱或產業題目> [--competitors \"A, B, C\"] [--我方/--me \"你的產品\"] [--招聘信號/--hiring-signals] [--framework 五力/藍海/bcg/9box/7powers/wtp] [--lang en]"
 allowed-tools: [Read, Write, Bash, WebSearch, WebFetch]
 model: claude-opus-4-8
 ---
@@ -34,6 +34,7 @@ model: claude-opus-4-8
 - 若有 `--competitors "A, B, C"`，就用這份清單當競品集。
 - 若有 `--我方 "你的產品"`（英文別名 `--me`），記住它，階段 4 對照用；沒有就把「我方」視為未指定，階段 4 只做橫向比較。
 - 若有 `--招聘信號` 旗標（英文別名 `--hiring-signals`），把 `招聘信號=開` 記下來，階段 2 會多跑維度 C、報告會多一節；**沒有這個旗標就完全跳過招聘信號**（預設關閉）。
+- 若有 `--framework <名稱>`（可選：`五力` / `藍海` / `bcg` / `9box` / `7powers` / `wtp`），記下 `框架=<名稱>`，階段 5 會多套一個「顧問級框架分析」節（定義見下方「顧問級框架」一節）；沒給就跳過。
 - 語言：`--lang en` → 輸出英文；`--lang zh` → 輸出繁中；都沒給就跟隨使用者輸入的語言（見開頭「輸出語言」規則）。
 - 建立 `SLUG`：主題轉小寫、空白與特殊字元換成 `-`，去頭尾 `-`。
   - 例：`"線上 AI 課程"` → `線上-ai-課程`
@@ -100,6 +101,7 @@ model: claude-opus-4-8
 - **SWOT**：優勢 / 劣勢 / 機會 / 威脅，每格 2–4 條、要具體。
 - **市場缺口**：綜合階段 2–4，指出「沒人做好、值得切入」的位置。
 - **3–5 條可執行戰略建議**：每條要能明天就開始做，不要空話。
+- **（選用）顧問級框架**：若階段 1 設了 `框架=<名稱>`，額外產出一節「顧問級框架分析」，用該框架把前面的資料重新拆一遍（做法見下方「顧問級框架」一節）。報告中這節放在「戰略建議」之後。
 
 ---
 
@@ -110,6 +112,21 @@ model: claude-opus-4-8
 - 算出**綜合信心分**（平均）。
 - **若綜合分 < 7**：指出最弱的維度，退回**階段 2 補搜該維度**，重跑一次階段 3–6（最多重跑 2 次，避免無限迴圈）。
 - 誠實標注所有「推估值」與「查無公開資料」的欄位，不要假裝有把握。
+
+---
+
+## 顧問級框架（選用，`--framework`）
+
+只有 `--framework` 有指定才做。依名稱套對應框架，用階段 2–4 的資料重新拆一遍，輸出成報告的「顧問級框架分析」節：
+
+- **五力**（波特五力 Five Forces）：對該產業評五個力——新進入者威脅、供應商議價力、買方議價力、替代品威脅、現有競爭強度，各打 1–5 分（5＝壓力最大）＋2 句理由，結論這賽道好不好賺、好不好進。
+- **藍海**（策略畫布 ＋ ERRC）：列出該產業 6–8 個競爭要素，各競品（含我方）打 1–5 分做對照表；再用 ERRC（消除／減少／提升／創造）給一個「不正面打」的差異化定位。
+- **bcg**（成長-市占矩陣）：把主要玩家或我方產品線依「市場成長率 × 相對市占」分成 明星／金牛／問號／狗，各給資源配置建議。
+- **9box**（GE-McKinsey 九宮格）：對每個競品（或我方多事業）評「產業吸引力 × 我方競爭力」各高／中／低，放進九宮格，給投資／守成／撤退建議。
+- **7powers**（7 Powers 護城河）：逐一判斷主要對手有無這 7 種護城河（規模經濟／網路效應／反定位／轉換成本／品牌／壟斷資源／流程優勢），結論它的領先守不守得住。
+- **wtp**（Where to Play / How to Win）：把分析收斂成兩句——我方該鎖定哪個戰場（並說為何避開其他）、靠哪一個守得住的優勢贏。
+
+框架這節同樣要誠實標注推測與資料不足處（評估員在階段 6 一併檢核）。
 
 ---
 
@@ -188,6 +205,8 @@ model: claude-opus-4-8
 /competitor-sprint Notion 競品 --competitors "Coda, Obsidian, Craft"
 /competitor-sprint AI 筆記工具 --我方 "我的筆記 App"
 /competitor-sprint SaaS 專案管理 --competitors "Asana, monday, ClickUp" --招聘信號
+/competitor-sprint 手搖飲 --competitors "五十嵐, 清心" --framework 五力
+/competitor-sprint Notion --我方 "我的工具" --framework 藍海
 ```
 
 ## 常見問題
